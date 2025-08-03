@@ -1,0 +1,32 @@
+@startuml
+title MVP Deposit creation
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(User, "Клиент", "")
+Person(CallManager, "Менеджер кол-центра", "")
+Person(BackManager, "Менеджер бэк-офиса", "")
+System(Site, "Сайт банка", "")
+System(InternetBank, "Интернет-банк", "")
+System(ABS, "АБС", "")
+System(CallCenterSystem, "Система кол-центра", "")
+
+
+System_Ext(Telekom, "Телеком-оператор", "")
+
+Rel(User, Site, "Заполняет заявку на депозит")
+Rel(Site, CallCenterSystem,"Регестрирует заявку")
+Rel(CallManager, CallCenterSystem,"Изучает заявку на депозит")
+Rel(CallManager, User,"Связывается по телефону и предолгает условия депозита")
+Rel(User, InternetBank,"Заходит под своей учетной записью и видит ставки по депозитам")
+Rel(InternetBank, ABS,"Получает актуальные ставки по API")
+Rel(User, InternetBank,"Подает заявку на откарытие депозита")
+Rel(Telekom, User,"Подтверждает заяку на депозит по смс")
+Rel(BackManager, ABS,"Подтверждает заяку на депозит")
+Rel(BackManager, ABS,"Подтверждает заяку на депозит")
+Rel(Telekom, User,"Получает СМС-уведомление о подтверждении ставки и открытии депозита")
+Rel(ABS, Telekom,"Отправлеет оповещение клиентам об изменении заявок")
+
+@enduml

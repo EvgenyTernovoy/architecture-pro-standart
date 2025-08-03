@@ -1,0 +1,26 @@
+@startuml
+title Передача ставок в кол-центр
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(User, "Клиент", "")
+Person(CallManager, "Менеджер кол-центра", "")
+Person(ExtCallManager, "Менеджер партнерского кол-центра", "")
+
+System(BankSystem, "Ситема банка", "")
+System(CallCenterSystem, "Система кол-центра", "")
+
+System_Ext(ExtCallCenter, "Партнерский кол-центр", "")
+
+Rel(User, CallManager, "Звонит")
+Rel(User, ExtCallManager, "Звонит")
+Rel(CallManager, CallCenterSystem, "Смотрит текущие ставки по депозитам")
+Rel(ExtCallManager, ExtCallCenter, "Смотри текущие ставки по депозитам")
+Rel(CallCenterSystem, BankSystem, "Получает текущие ставки по API")
+Rel(BankSystem, ExtCallCenter, "Отправляет текущие ставки по email")
+
+
+
+@enduml

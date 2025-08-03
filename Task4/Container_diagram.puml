@@ -1,0 +1,38 @@
+@startuml
+title MVP Deposit creation Container diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(CallCenterSystem, "Система кол-центра") {
+  Container(CallCenterService, "Система кол-центра", "React.js, Java Spring Boot", "")
+  ContainerDb(CallCenterDB, "База данных кол-центра", "PostgreSQL", "")
+}
+
+Container(NotificationService, "Email-шлюз")
+
+
+Container_Boundary(InternetBankSystem, "Система Интернет-банка") {
+  Container(BackendInternetBank, "Интернет-банк бэкенд", "ASP.NET MVC", "Проведением платежей и открытие текущих счетов (дебетовых карт)")
+  Container(DepositService, "Сервис депозитов", "Java Spring Boot", "Сервис по работе с депозитами")
+  Container(DepositCache, "Deposit cache", "Redis", "")
+}
+  
+Container_Boundary(ABS, "АБС") {
+  Container(ABSClient, "АБС клиент", "Delphi", "")
+  ContainerDb(ABSDB, "База данных АБС", "Oracle", "")
+}
+
+System_Ext(EmaiOperator, "Партнерский email оператор", "")
+
+Rel(CallCenterService, DepositService, "Makes API calls to", "https, json")
+Rel(CallCenterService, CallCenterDB, "Reads/Writes data")
+Rel(ABSClient, NotificationService, "Send email")
+Rel(NotificationService, EmaiOperator, "Send email")
+Rel(DepositService, ABSDB, "Reads/Writes data")
+Rel(DepositService, DepositCache, "Reads/Writes data from cache")
+Rel(ABSClient, ABSDB, "Reads/Writes data")
+
+
+@enduml
