@@ -1,0 +1,31 @@
+@startuml
+title Credit Application Context diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(User, "Клиент", "")
+System(Site, "Сайт банка", "")
+System(InternetBank, "Интернет-банк", "")
+System(ABS, "АБС", "")
+System(CreditService, "Сервис кредитов", "")
+
+System_Ext(Telekom, "Телеком-оператор", "")
+System_Ext(CreditHistory, "Бюро кредитных историй", "")
+
+Rel(User, Site, "Заполняет заявку на кредит")
+Rel(Site, CreditService,"Отправляет заявку по https")
+Rel(CreditService, CreditHistory,"Запрашивает данные о клиенте")
+Rel(CreditService, ABS,"Обновляет данные о заявках")
+Rel(CreditService, Telekom,"Отправляет СМС-уведомление об изменении статуса заявок")
+
+
+Rel(User, InternetBank,"Заходит под своей учетной записью и видит условия кредитования")
+
+Rel(InternetBank, CreditService,"Получает актуальные условия по API")
+Rel(User, InternetBank,"Подает заявку на получение кредита")
+Rel(Telekom, User,"Получает СМС-уведомление о подтверждении ставки и открытии депозита")
+
+
+@enduml
