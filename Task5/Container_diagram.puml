@@ -1,0 +1,51 @@
+@startuml
+title Credit Application Container diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+
+
+Container(Site, "Сайт банка", "React.js, PHP Laravel", "Подача заявок на кредит")
+Container(ClientInternetBank, "Интернет-банк веб клиент", "React.js")
+
+  
+Container(ApiGateway, "Api Gateway", "Kong", "General entry point")  
+  
+Container(MessageQueue, "Message Queue", "Kafka", "")
+Container(NotificationService, "СМС-шлюз телеком-оператора")
+Container(CreditConveyor, "Кредитный конвейер")
+Container(ScoringSystem, "Система скоринга")
+
+
+Container_Boundary(InternetBankSystem, "Система Интернет-банка") {
+  Container(BackendInternetBank, "Интернет-банк бэкенд", "ASP.NET MVC", "Проведением платежей и открытие текущих счетов (дебетовых карт)")
+  Container(CreditService, "Сервис кредитов", "Java Spring Boot", "Сервис по работе с кредитами")
+  Container(CreditCache, "Credit cache", "Redis", "")
+}
+  
+Container_Boundary(ABS, "АБС") {
+  Container(ABSClient, "АБС клиент", "Delphi", "")
+  ContainerDb(ABSDB, "База данных АБС", "Oracle", "")
+}
+
+System_Ext(Telekom, "Телеком-оператор", "")
+System_Ext(CreditHistory, "Бюро кредитных историй", "")
+
+Rel(Site, ApiGateway, "Makes API calls to", "https, json")
+Rel(ClientInternetBank, ApiGateway, "Makes API calls to", "https, json")
+Rel(ApiGateway, BackendInternetBank, "Makes API calls to", "https, json")
+Rel(ApiGateway, CreditService, "Makes Credit API calls to", "https, json")
+
+Rel(CreditService, CreditHistory, "Reads client credit data")
+Rel(CreditService, MessageQueue, "Reads/Writes credit application events")
+Rel(CreditService, ABSDB, "Reads/Writes data")
+Rel(CreditService, CreditCache, "Reads/Writes data from cache")
+Rel(CreditService, CreditConveyor, "Makes API calls to")
+Rel(CreditService, ScoringSystem, "Makes API calls to")
+Rel(ABSClient, ABSDB, "Reads/Writes data")
+Rel(CreditService, NotificationService, "Send SMS")
+Rel(NotificationService, Telekom, "Send SMS")
+
+@enduml
